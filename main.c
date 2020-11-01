@@ -20,44 +20,42 @@ struct player {
 };
 
 void display_player(struct player *p) {
-  printf("(%d, %d, %c)", player->posx, player->posy, player->skin);
+  char text[15];
+  sprintf(text, "(%d, %d)", p->posx, p->posy);
+  addstr(text);
 }
 
 int main() {
   init();
 
-  struct player p1 = {0, 0, '#'};
-
-  int maxx, maxy;
-  getmaxyx(stdscr, maxx, maxy);
+  struct player p1 = {5, 5, '#'};
 
   bool need_clear = FALSE;
 
   while (true) {
     switch (getch()) {
       case KEY_UP:
-        if (p1.posy >= 0) p1.posy--;
-        display_player(p1); return 0;
+        if (p1.posy >= 2) p1.posy--;
         need_clear = TRUE;
         break;
       case KEY_DOWN:
-        if (p1.posy <= maxy) p1.posy++;
+        if (p1.posy <= getmaxy(stdscr) - 2) p1.posy++;
         need_clear = TRUE;
         break;
       case KEY_LEFT:
-        if (p1.posx <= 0) p1.posx--;
+        if (p1.posx >= 1) p1.posx--;
         need_clear = TRUE;
         break;
       case KEY_RIGHT:
-        if (p1.posx >= maxx) p1.posx++;
+        if (p1.posx <= getmaxx(stdscr) - 2) p1.posx++;
         need_clear = TRUE;
         break;
     }
 
-    mvaddch(p1.posx, p1.posy, p1.skin);
-
     if (need_clear) {
       erase();
+      display_player(&p1);
+      mvaddch(p1.posy, p1.posx, p1.skin);
       refresh();
     }
   }
